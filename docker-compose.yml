@@ -1,0 +1,115 @@
+version: '2'
+services:
+    elasticsearch:
+        image: elasticsearch
+        hostname: elasticsearch
+        container_name: elasticsearch
+        stdin_open: true
+        tty: true
+        ports:
+                - "9200:9200"
+                - "9300:9300"
+        environment:
+                ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+
+    kibana:
+        image: kibana
+        hostname: kibana
+        container_name: kibana
+        stdin_open: true
+        tty: true
+        ports:
+                - "8088:5601"
+        links:
+                - elasticsearch
+    
+    keydata:
+        image: appcontainers/jenkins
+        hostname: jenkins-keys
+        container_name: jenkins-keys
+        stdin_open: true
+        tty: true
+        volumes:
+        - /var/lib/jenkins_slave_key
+        environment:
+        - ROLE=slave
+        - SSH_PASS=jenkins123
+        command: /bin/bash
+        
+    data:
+        image: appcontainers/jenkins
+        hostname: jenkins-data
+        container_name: jenkins-data
+        stdin_open: true
+        tty: true
+        volumes_from:
+        - keydata
+        volumes:
+        - ./jenkins:/var/lib/jenkins
+        environment:
+        - ROLE=slave
+        - SSH_PASS=jenkins123
+        command: /bin/bash
+    
+    mavenslave:
+        image: appcontainers/jenkins
+        hostname: maven-slave
+        container_name: maven-slave
+        stdin_open: true
+        tty: true
+        restart: always
+        privileged: true
+        command: bash -c "yum install -y ant ant-contrib ant-nodeps gettext rpm-build maven && cd /tmp && wget http://www-eu.apache.org/dist/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz && tar -xzvf apache-maven-3.5.2-bin.tar.gz && mv apache-maven-3.5.2 /usr/local/ $$ export PATH=$PATH:/usr/local/apache-maven-3.5.2/bin && export MAVEN_OPTS='-Xms256m -Xmx512m'"
+        volumes_from:
+        - keydata
+        volumes:
+        - /var/lib/jenkins
+        environment:
+        - ROLE=slave
+        - SSH_PASS=jenkins123
+        command: /bin/bash
+    
+    rabbitmq:
+        image: rabbitmq:3-management
+        hostname: rabbitmq
+        container_name: rabbitmq
+        stdin_open: true
+        tty: true
+        ports:
+        - "8888:15672"
+        - "5672:5672"
+    
+    web:
+        image: appcontainers/jenkins
+        hostname: jenkins
+        container_name: jenkins
+        stdin_open: true
+        tty: true
+        restart: always
+        privileged: true
+        ports:
+        - "8080:8080"
+        volumes_from:
+        - keydata
+        - data
+        volumes:
+        - /var/lib/jenkins
+        environment:
+        - ROLE=master
+        - SSH_PASS=jenkins123
+        links:
+        - mavenslave
+        - elasticsearch
+        - rabbitmq
+        command: /bin/bash
+        
+    
+    python3:
+        build:
+            context: python/
+        hostname: pythonsend
+        container_name: pythonsend
+        stdin_open: true
+        tty: true
+        links:
+        - rabbitmq

@@ -1,0 +1,7 @@
+wget -qO- https://get.docker.com/ | sh
+usermod -aG docker $(whoami)
+systemctl enable docker.service
+systemctl start docker.service
+yum install epel-release
+pip install docker-compose
+yum upgrade python*
