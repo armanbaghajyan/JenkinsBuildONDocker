@@ -2,13 +2,13 @@ In this Project I installed Jenkins Master Slave to bild the maven job then inst
 All Installation and configuration was made on Docker with Docker compose 
 
 - Task Running steps
-- Install docker and docker compose 
-- Create folder and get to it
+- Install docker and docker-compose 
+- Create folder and move to it
 - Download project from Git
-- Download Jenkins workin dir from link https://drive.google.com/open?id=1DrTGweHJK1JY7lMieJXJHjrRELP5gisZ
+- Download Jenkins working directory from link https://drive.google.com/open?id=1DrTGweHJK1JY7lMieJXJHjrRELP5gisZ
 - Unzip jenkins.tar.gz to jenkins folder
 - Unzip Python.tar.gz to python folder and then open rabbitmq.py file and add email credentials
 - And run docker-compose up
-- After it create queue and excahange in rebbitmq
+- After it create queue and exchange in rebbitmq (default login password)
 - Then login to jenkins and connect to slave
 - Then run the build 
