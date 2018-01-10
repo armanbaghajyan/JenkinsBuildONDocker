@@ -59,7 +59,7 @@ services:
         tty: true
         restart: always
         privileged: true
-        command: bash -c "yum install -y ant ant-contrib ant-nodeps gettext rpm-build maven && cd /tmp && wget http://www-eu.apache.org/dist/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz && tar -xzvf apache-maven-3.5.2-bin.tar.gz && mv apache-maven-3.5.2 /usr/local/ $$ export PATH=$PATH:/usr/local/apache-maven-3.5.2/bin && export MAVEN_OPTS='-Xms256m -Xmx512m'"
+        command: bash -c "yum install -y ant ant-contrib ant-nodeps gettext rpm-build maven && cd /tmp && wget http://www-eu.apache.org/dist/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz && tar -xzvf apache-maven-3.5.2-bin.tar.gz && mv apache-maven-3.5.2 /usr/local/ && export PATH=$PATH:/usr/local/apache-maven-3.5.2/bin && export MAVEN_OPTS='-Xms256m -Xmx512m'"
         volumes_from:
         - keydata
         volumes:
